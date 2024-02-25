@@ -2,7 +2,7 @@
 
 namespace SharpLabs
 {
-    class Program
+    class StringTasks
     {
         static int getCharCount(string s, char c)
         {
@@ -67,7 +67,7 @@ namespace SharpLabs
             return st.Count == 0;
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             string str = "()(())";
             bool res = checkRoundBrackets(str);
