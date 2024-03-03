@@ -44,6 +44,42 @@ file class FileIntReader
 }
 class Program
 {
+    private static int[] Merge(int[] a, int[] b)
+    {
+        int i = 0;
+        int j = 0;
+        int k = 0;
+
+        int n = a.Length;
+        int m = b.Length;
+        int[] result = new int[n + m];
+        while(i < n && j < m)
+        {
+            if (a[i] < b[j])
+            {
+                result[k++] = a[i++];
+            }
+            else
+            {
+                result[k++] = b[j++];
+            }
+        }
+        if(i < n)
+        {
+            while(i < n)
+            {
+                result[k++] = a[i++];
+            }
+        }
+        else
+        {
+            while(j < m)
+            {
+                result[k++] = b[j++];
+            }
+        }
+        return result;
+    }
     public static void FileSort(string path)
     {
         return;
@@ -52,13 +88,13 @@ class Program
     public static void Main()
     {
         string fn = @"D:\SharpLabs\SharpLabs\FileSort\1.txt";
-        //FileSort(fn);
-        FileIntReader fir = new FileIntReader(fn);
-        int n = fir.NextInt();
-        while(n >= 0)
-        {
-            Console.WriteLine($"Read from file: {n}");
-            n = fir.NextInt();
-        }
+        FileSort(fn);
+        //FileIntReader fir = new FileIntReader(fn);
+        //int n = fir.NextInt();
+        //while(n >= 0)
+        //{
+        //    Console.WriteLine($"Read from file: {n}");
+        //    n = fir.NextInt();
+        //}
     }
 }
