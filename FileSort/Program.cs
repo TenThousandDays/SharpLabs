@@ -1,100 +1,88 @@
 ﻿
-file class FileIntReader
+
+using System.Text;
+
+namespace FileSort
 {
-    private FileStream fs;
-    private byte[] curr;
-    private List<byte> buffer;
-
-    public FileIntReader(string filename)
+    class Program
     {
-        fs = new FileStream(filename, FileMode.Open);
-        curr = new byte[1];
-        buffer = new List<byte>();
-    }
-
-    public int NextInt()
-    {
-        int num;
-        while (fs.Read(curr, 0, 1) != 0)
+        private static byte[] make_bytes(int x)
         {
-            if (curr[0] != 0x20)
+            return Encoding.UTF8.GetBytes($"{x} ");
+        }
+        public static void SplitFile(string filename)
+        {
+            string first_fn = filename + ".A";
+            string second_fn = filename + ".B";
+            FileStream[] F = new FileStream[2];
+            F[0] = new FileStream(first_fn, FileMode.Create);
+            F[1] = new FileStream(second_fn, FileMode.Create);
+
+            FileIntReader fir = new FileIntReader(filename);
+            int x1 = fir.NextInt();
+            int x2;
+            int n = 0;
+            while(x1 >= 0)
             {
-                buffer.Add(curr[0]);
-            }
-            else
-            {
-                if (!int.TryParse(buffer.ToArray(), out num))
+                F[n].Write(make_bytes(x1));
+                x2 = fir.NextInt();
+                if(x1 > x2)
                 {
-                    throw new Exception("Error while reading numbers from file!");
+                    n = 1 - n;
                 }
-                curr[0] = 0x00;
-                buffer.Clear();
-                return num;
+                x1 = x2;
             }
-        }
-        if (int.TryParse(buffer.ToArray(), out num))
-        {
-            curr[0] = 0x00;
-            buffer.Clear();
-            return num;
-        }
-        fs.Close();
-        return -1;
-    }
-}
-class Program
-{
-    private static int[] Merge(int[] a, int[] b)
-    {
-        int i = 0;
-        int j = 0;
-        int k = 0;
 
-        int n = a.Length;
-        int m = b.Length;
-        int[] result = new int[n + m];
-        while(i < n && j < m)
+            F[0].Close();
+            F[1].Close();
+            return;
+        }
+        private static int[] Merge(int[] a, int[] b)
         {
-            if (a[i] < b[j])
+            int i = 0;
+            int j = 0;
+            int k = 0;
+
+            int n = a.Length;
+            int m = b.Length;
+            int[] result = new int[n + m];
+            while (i < n && j < m)
             {
-                result[k++] = a[i++];
+                if (a[i] < b[j])
+                {
+                    result[k++] = a[i++];
+                }
+                else
+                {
+                    result[k++] = b[j++];
+                }
+            }
+            if (i < n)
+            {
+                while (i < n)
+                {
+                    result[k++] = a[i++];
+                }
             }
             else
             {
-                result[k++] = b[j++];
+                while (j < m)
+                {
+                    result[k++] = b[j++];
+                }
             }
+            return result;
         }
-        if(i < n)
+        public static void FileSort(string path)
         {
-            while(i < n)
-            {
-                result[k++] = a[i++];
-            }
+            SplitFile(path);
         }
-        else
-        {
-            while(j < m)
-            {
-                result[k++] = b[j++];
-            }
-        }
-        return result;
-    }
-    public static void FileSort(string path)
-    {
-        return;
-    }
 
-    public static void Main()
-    {
-        string fn = @"D:\SharpLabs\SharpLabs\FileSort\1.txt";
-        FileSort(fn);
-        //FileIntReader fir = new FileIntReader(fn);
-        //int n = fir.NextInt();
-        //while(n >= 0)
-        //{
-        //    Console.WriteLine($"Read from file: {n}");
-        //    n = fir.NextInt();
-        //}
+        public static void Main()
+        {
+            string fn = @"D:\SharpLabs\SharpLabs\FileSort\1.txt";
+            FileSort(fn);
+            
+        }
     }
 }
